@@ -20,7 +20,6 @@ class JobController extends Controller
         // Ambil semua order yang ditugaskan ke teknisi ini melalui relasi
         $jobs = $technician->ordersAsTechnician()
                             ->with('customer', 'category') 
-                            ->where('status', 'assigned')
                             ->latest()
                             ->get();
 
@@ -41,7 +40,7 @@ class JobController extends Controller
 
         // Validasi input status
         $validator = Validator::make($request->all(), [
-            'status' => ['required', Rule::in(['in_progress', 'completed'])]
+            'status' => ['required', Rule::in(['in_progress', 'completed', 'cancelled'])],
         ]);
 
         if ($validator->fails()) {
@@ -59,5 +58,18 @@ class JobController extends Controller
             'message' => 'Status pekerjaan berhasil diupdate',
             'data' => $order
         ]);
+    }
+
+    public function show(Request $request, Order $order)
+    {
+        // Keamanan: Pastikan teknisi hanya bisa melihat job miliknya sendiri
+        if ($request->user()->id !== $order->technician_id) {
+            return response()->json(['message' => 'Ini bukan pekerjaan Anda.'], 403);
+        }
+
+        // Muat relasi yang dibutuhkan
+        $order->load('customer', 'category', 'photos');
+
+        return response()->json(['data' => $order]);
     }
 }

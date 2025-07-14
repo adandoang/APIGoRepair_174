@@ -40,6 +40,11 @@
                     </td>
                     <td>{{ ucfirst($order->status) }}</td>
                 </tr>
+                <!-- Tambahkan baris total tagihan di bawah sini -->
+                <tr>
+                    <td><strong>Total Tagihan</strong></td>
+                    <td><strong>Rp {{ number_format($order->invoice_amount, 0, ',', '.') }}</strong></td>
+                </tr>
             </tbody>
         </table>
     </div>

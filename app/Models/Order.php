@@ -27,6 +27,7 @@ class Order extends Model
         'status',
         'payment_proof_url',
         'is_payment_validated',
+        'technician_notes',
     ];
 
     /**
@@ -63,5 +64,10 @@ class Order extends Model
     public function photos(): HasMany
     {
         return $this->hasMany(OrderPhoto::class);
+    }
+
+    public function rating()
+    {
+        return $this->hasOne(ServiceRating::class);
     }
 }
